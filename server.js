@@ -1,11 +1,16 @@
 const express = require('express'); //load express
 const app = express(); //create express app
 const fruits = require('./models/fruits.js');
+const jsxViewEngine = require('jsx-view-engine')
 
 
 app.get('/', function(req, res) {
   res.send('<h1>Home Page</h1>');
 });
+
+//Set up view engine
+app.engine('jsx', jsxViewEngine());
+app.set('view engine', 'jsx');
 
 //near the top, around other app.use() calls
 app.use(express.urlencoded({extended:false}));
@@ -14,10 +19,7 @@ app.get('/fruits', function(req, res){
   res.render('Index', { fruits: fruits });
 });
 
-app.set('view engine', 'jsx');
-  app.engine('jsx', require('jsx-view-engine').createEngine());
-
-  app.get('/fruits/new', (req, res) => {
+app.get('/fruits/new', (req, res) => {
     res.render('New');
 });
 
@@ -39,21 +41,14 @@ app.post('/fruits', (req, res)=>{
 
 //add show route
 app.get('/fruits/:indexOfFruitsArray', function(req, res){
-    res.render('Show', {fruit: fruits[req.params.indexOfFruitsArray]
+    res.render('Show', {fruit: fruits[req.params.indexOfFruitsArray] });
 });
 
 //add middleware
 app.use((req, res, next) => {
-  console.log('I run for all routes');
-  next();
-});
-});
-
-app.use((req, res, next) => {
     console.log('I run for all routes');
     next();
 });
-
 
 //Tell app to listen
 app.listen(3000, () => {
